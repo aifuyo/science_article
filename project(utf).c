@@ -40,7 +40,7 @@ void printResultForExam(char questions[20][200], char answers[20][200], unsigned
     printf("\n");
     printf("------------------------------------\n");
     printf("Поздравляю вас с прохождением теста!\n");
-    printf("Ваша оценка: %u.");
+    printf("Ваша оценка: %u.",mark);
     if(20-true_answ == 0)
         printf("Ошибок допущено не было\n");
     else{
