@@ -13,49 +13,49 @@
 #include <locale.h>
 #include <time.h>
 
-int test(int lim, int mas[], int digit)
+int test(unsigned short int *lim, int *mas, int *digit)
 {
-    int i;
-    for (i = 0; i<lim; i++)
-        if (mas[i] == digit)
+    for (short int i = 0; i < *lim; i++)
+        if (mas[i] == *digit)
             return 1;
     return 0;
 }
 
-void inicialArray(int arr[20])
+void inicialArray(int *arr)
 {
-    for (unsigned i=0;i<20;i++)
+    for (unsigned short int i=0;i<20;i++)
     {
         do
         {
             arr[i] = rand()%20;
-        } while (test(i, arr, arr[i]));//вызов функции проверки на повторяющиеся значения элементов массива
+        } while (test(&i, arr, &arr[i]));//вызов функции проверки на повторяющиеся значения элементов массива
     }
 }
 
-void printResultForExam(char questions[20][200], char answers[20][200], unsigned j, int incor_answ[j], unsigned true_answ)
+void printResultForExam(char questions[20][200], char answers[20][200], unsigned j, int *incor_answ, short int *true_answ)
 {
-    unsigned mark;
-    mark=true_answ/4;
+    double mark;
+    mark=*true_answ/4;
     printf("\n");
     printf("------------------------------------\n");
     printf("Поздравляю вас с прохождением теста!\n");
-    printf("Ваша оценка: %u.",mark);
-    if(20-true_answ == 0)
+    printf("Ваша оценка: %.1lf.",mark);
+    if(20-*true_answ == 0)
         printf("Ошибок допущено не было\n");
     else{
-        printf("Количество допущенных ошибок: %u\n",20-true_answ);
+        printf("Количество допущенных ошибок: %d\n",20-*true_answ);
         printf("Ошибки были допущены в следующих вопросах: \n");
-        for (unsigned i=0; i<j; i++)
+        for (short int i=0; i<j; i++)
         {
             printf("%s\n",questions[incor_answ[i]]);
         }
     }
 }
 
-void printQuestionsForExam(char questions[20][200], char answers[20][200], unsigned true_answ, int arr[20], int incor_answ[20])
+void printQuestionsForExam(char questions[20][200], char answers[20][200], short int *true_answ, int *arr, int incor_answ[20])
 {
-    unsigned answer,j=0;
+    unsigned answer;
+    unsigned j=0;
     for (unsigned i=0;i<20;i++)
     {
         printf("%s\n",questions[arr[i]]);
@@ -68,7 +68,7 @@ void printQuestionsForExam(char questions[20][200], char answers[20][200], unsig
         printf("----------- \n");
         if ((arr[i]+5)%4==0)
         {
-            if (answer==4) true_answ++;
+            if (answer==4) *true_answ = *true_answ + 1;
             else
             {
                 incor_answ[j]=arr[i];
@@ -77,7 +77,7 @@ void printQuestionsForExam(char questions[20][200], char answers[20][200], unsig
         }
         else
         {
-            if (answer==(arr[i]+5)%4) true_answ++;
+            if (answer==(arr[i]+5)%4) *true_answ = *true_answ + 1;
             else
             {
                 incor_answ[j]=arr[i];
@@ -85,15 +85,15 @@ void printQuestionsForExam(char questions[20][200], char answers[20][200], unsig
             }
         }
     }
-    printResultForExam(questions, answers,j, incor_answ, true_answ);
+    printResultForExam(questions, answers, j, incor_answ, true_answ);
 }
 
 void exam(char questions[20][200],char answers[20][200])
 {
     srand(time(NULL));
-    unsigned true_answ=0;
-    int incor_answ[20]; //инициализация массива неправильных ответов
-    int arr[20];
+    short int *true_answ = (short int*)malloc(0);
+    int *incor_answ = (int*)malloc(20); //инициализация массива неправильных ответов
+    int *arr = (int*)malloc(20);
     inicialArray(arr);//инициализация массива, который будет заполняться рандомными числами
     printf("-------------------------------------\n");
     printf("Добро пожаловать в режим \"экзамен\"!\n");
@@ -105,19 +105,19 @@ void exam(char questions[20][200],char answers[20][200])
 
 void printQuestionsForTrain(char questions[20][200], char answers[20][200], int number)
 {
-    unsigned answer;
+    short int answer;
     printf("%s\n",questions[number]);
     printf("%s\n",answers[number]);
-    printf("Ответ: "); scanf("%u",&answer);
+    printf("Ответ: "); scanf("%hd",&answer);
     while (answer==0 || answer>4){
         printf("Некорректный ввод. Введите еще раз! \n");
-        printf("Ответ: "); scanf("%u", &answer);
+        printf("Ответ: "); scanf("%hd", &answer);
     }
     if ((number+5)%4==0)
     {
         while (answer!=4){
             printf("Вы ответили неверно! Повторите попытку!\n");
-            printf("Ответ: "); scanf("%u", &answer);
+            printf("Ответ: "); scanf("%hd", &answer);
         }
         printf("Вы ответили верно! \n");
         printf("------------------ \n");
@@ -126,7 +126,7 @@ void printQuestionsForTrain(char questions[20][200], char answers[20][200], int 
     {
         while (answer!=(number+5)%4){
             printf("Вы ответили неверно! Повторите попытку!\n");
-            printf("Ответ: "); scanf("%u", &answer);
+            printf("Ответ: "); scanf("%hd", &answer);
         }
         printf("Вы ответили верно! \n");
         printf("------------------ \n");
@@ -136,7 +136,7 @@ void printQuestionsForTrain(char questions[20][200], char answers[20][200], int 
 
 void train(char questions[20][200], char answers[20][200]){
     srand(time(NULL));
-    int arr[20];
+    int *arr = (int*)malloc(20);
     inicialArray(arr);
     printf("----------------------------------------\n");
     printf("Добро пожаловать в режим \"тренировка\"!\n");
@@ -144,7 +144,7 @@ void train(char questions[20][200], char answers[20][200]){
     printf("Условия: 20 вопросов, вопрос повтояется до получения правильного ответа на него\n");
     printf("\n");
     //рандомный вывод вопросов и вариантов ответов к ним на экран
-    for (unsigned i=0; i<20;i++){
+    for (short int i=0; i<20;i++){
         printQuestionsForTrain(questions,answers,arr[i]);
     }
     printf("\n");
